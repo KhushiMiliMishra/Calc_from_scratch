@@ -31,9 +31,13 @@ Browser → Tomcat Server → Servlet → Calculator Engine → Response
 
 http://localhost:8080/CalculatorApp
 
+## Code for compiling
+`-d WEB-INF\classes src\com\calculator\CalculatorServlet.java src\com\calculator\CalculatorEngine.java`
+
 ## Future Improvements
 
 - Parentheses support
 - Negative numbers
 - Improved UI
 - Keyboard + button input
+

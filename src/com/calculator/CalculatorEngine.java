@@ -11,6 +11,7 @@ public class CalculatorEngine {
                 return 1;
             case '*':
             case '/':
+            case '%':
                 return 2;
             default:
                 return 0;
@@ -31,6 +32,8 @@ public class CalculatorEngine {
                     throw new ArithmeticException("Division by zero");
                 }
                 return a / b;
+            case '%':
+                return a%b;
             default:
                 throw new IllegalArgumentException("Invalid operator: " + operator);
         }
@@ -90,9 +93,40 @@ public class CalculatorEngine {
 
                 numbers.push(Double.parseDouble(num.toString())); // Push the parsed number onto the stack
             }
-            
-            else if(ch=='+' || ch=='-' || ch=='*' || ch=='/') //if it is an operator
+
+            else if(ch=='(')
             {
+                operators.push(ch);
+                lastWasOperator = true; // Set to true since we are now processing an operator
+            }
+
+            else if(ch == ')')
+            {
+                while(!operators.isEmpty() && operators.peek() != '(')
+                {
+                    double b = numbers.pop();
+                    double a = numbers.pop();
+                    char op = operators.pop();
+                    numbers.push(applyOperator(a,b,op));
+                }
+
+                if(operators.isEmpty())
+                {
+                    throw new IllegalArgumentException("Mismatched parentheses");
+                }
+
+                operators.pop(); // remove '('
+                lastWasOperator = false;
+            }
+
+            else if(ch=='+' || ch=='-' || ch=='*' || ch=='/' || ch=='%') //if it is an operator
+            {
+                //Handle unary plus
+                if(ch == '+' && lastWasOperator)
+                {
+                    continue;
+                }
+
                 //Handle unary minus for negative numbers
                 if(ch=='-' && lastWasOperator)
                 {
@@ -141,6 +175,7 @@ public class CalculatorEngine {
 
                 lastWasOperator = true; 
             }
+
             else 
             {
                 throw new IllegalArgumentException("Invalid character: " + ch);
@@ -156,6 +191,9 @@ public class CalculatorEngine {
         // Apply remaining operators
         while(!operators.isEmpty()) 
         {
+            if(operators.peek() == '(')
+                throw new IllegalArgumentException("Mismatched parentheses");
+
             double b = numbers.pop();
             double a = numbers.pop();
             char op = operators.pop();
@@ -163,7 +201,6 @@ public class CalculatorEngine {
         }
 
         return numbers.pop(); // The final result 
-
     }
     public static void main(String[] args) {
         CalculatorEngine engine = new CalculatorEngine();
