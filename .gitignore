@@ -1,0 +1,15 @@
+# Compiled Java files
+*.class
+
+# Tomcat
+apache-tomcat*
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
