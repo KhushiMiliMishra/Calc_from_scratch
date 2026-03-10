@@ -93,6 +93,37 @@ public class CalculatorEngine {
             
             else if(ch=='+' || ch=='-' || ch=='*' || ch=='/') //if it is an operator
             {
+                //Handle unary minus for negative numbers
+                if(ch=='-' && lastWasOperator)
+                {
+                    StringBuilder num =new StringBuilder();
+                    num.append('-');
+                    i++;
+
+                    boolean hasDecimal = false;
+                    while(i<expression.length() && (Character.isDigit(expression.charAt(i)) || expression.charAt(i)=='.')) 
+                    {
+                        char current = expression.charAt(i);
+
+                        if (current == '.') {
+                            if (hasDecimal) {
+                                throw new IllegalArgumentException("Invalid number format");
+                            }
+                            hasDecimal = true;
+                        }
+                        num.append(current);
+                        i++;
+                    }
+                    i--; // Move back one character for the extra increment
+                    if(num.toString().equals("-"))
+                    {
+                        throw new IllegalArgumentException("Invalid negative number format");
+                    }
+                    numbers.push(Double.parseDouble(num.toString()));
+                    lastWasOperator = false; // Set to false since we are now processing a number
+                    continue; // Skip the rest of the loop to avoid treating this as a binary operator
+                }
+                //Handle invalid operator sequences like "++" or "--"
                 if(lastWasOperator) 
                 {
                     throw new IllegalArgumentException("Invalid operator sequence");
