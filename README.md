@@ -36,8 +36,7 @@ http://localhost:8080/CalculatorApp
 
 ## Future Improvements
 
-- Parentheses support
-- Negative numbers
+- Memory management
 - Improved UI
 - Keyboard + button input
 
