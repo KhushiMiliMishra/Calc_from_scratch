@@ -9,6 +9,7 @@ A web-based calculator built using Java Servlets and Apache Tomcat.
 - Operator precedence support
 - Division by zero detection
 - Input validation
+- Memory management
 
 ## Tech Stack
 
@@ -36,7 +37,6 @@ http://localhost:8080/CalculatorApp
 
 ## Future Improvements
 
-- Memory management
 - Improved UI
 - Keyboard + button input
 

@@ -33,7 +33,7 @@ public class CalculatorEngine {
                 }
                 return a / b;
             case '%':
-                return a%b;
+                return a % b;
             default:
                 throw new IllegalArgumentException("Invalid operator: " + operator);
         }
