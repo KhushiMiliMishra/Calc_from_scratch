@@ -10,6 +10,7 @@ A web-based calculator built using Java Servlets and Apache Tomcat.
 - Division by zero detection
 - Input validation
 - Memory management
+- Handles dark/light theme
 
 ## Tech Stack
 
@@ -35,7 +36,5 @@ http://localhost:8080/CalculatorApp
 ## Code for compiling
 `-d WEB-INF\classes src\com\calculator\CalculatorServlet.java src\com\calculator\CalculatorEngine.java`
 
-## Future Improvements
 
-- Dark theme option
 
