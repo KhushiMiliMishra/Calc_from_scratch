@@ -1,51 +1,46 @@
 package com.calculator;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.*;
 
-import javax.servlet.ServletException;
+
+import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 
 @WebServlet("/calculate")
-public class CalculatorServlet extends HttpServlet
-{
+public class CalculatorServlet extends HttpServlet {
+
     private CalculatorEngine engine = new CalculatorEngine();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
-
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
+            throws ServletException, IOException {
 
         String expression = request.getParameter("expression");
         String action = request.getParameter("action");
 
-        // Get session for memory storage
         HttpSession session = request.getSession();
+
         Double memory = (Double) session.getAttribute("memory");
+        List<String> history = (List<String>) session.getAttribute("history");
 
         if(memory == null)
-        {
             memory = 0.0;
-        }
+
+        if(history == null)
+            history = new ArrayList<>();
 
         double result = 0;
 
-        try
-        {
-            // Evaluate expression if provided
+        try {
+
             if(expression != null && !expression.isEmpty())
             {
                 result = engine.evaluate(expression);
+                history.add(expression + " = " + result);
             }
 
-            // Handle memory operations
             if(action != null)
             {
                 switch(action)
@@ -68,15 +63,18 @@ public class CalculatorServlet extends HttpServlet
                 }
             }
 
-            // Save memory back into session
             session.setAttribute("memory", memory);
+            session.setAttribute("history", history);
 
-            out.println("<h2>Result: " + result + "</h2>");
-            out.println("<h3>Memory: " + memory + "</h3>");
+            request.setAttribute("result", result);
+
         }
         catch(Exception e)
         {
-            out.println("<h2 style='color:red;'>Error: " + e.getMessage() + "</h2>");
+            request.setAttribute("error", e.getMessage());
         }
+
+        // THIS IS THE IMPORTANT LINE
+        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 }
