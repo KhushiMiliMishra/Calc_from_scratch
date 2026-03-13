@@ -22,11 +22,12 @@ body{
     background:white;
     padding:20px;
     border-radius:10px;
+    width: 300px;
     box-shadow:0 0 15px rgba(0,0,0,0.2);
 }
 
 .display{
-    width:100%;
+    width:95%;
     height:55px;
     font-size:24px;
     margin-bottom:15px;
@@ -113,19 +114,33 @@ value="<%= request.getAttribute("result") != null ? request.getAttribute("result
 
 <button type="button" class="clear" onclick="clearDisplay()">C</button>
 
-<button class="memory" type="submit" name="action" value="MC">MC</button> <button class="memory" type="submit" name="action" value="MR">MR</button> <button class="memory" type="submit" name="action" value="M+">M+</button> <button class="memory" type="submit" name="action" value="M-">M-</button>
+<button class="memory" type="submit" name="action" value="MC">MC</button>
+<button class="memory" type="submit" name="action" value="MR">MR</button>
+<button class="memory" type="submit" name="action" value="M+">M+</button>
+<button class="memory" type="submit" name="action" value="M-">M-</button>
 
-<button type="button" onclick="addToDisplay('7')">7</button> <button type="button" onclick="addToDisplay('8')">8</button> <button type="button" onclick="addToDisplay('9')">9</button> <button type="button" onclick="addToDisplay('/')">/</button>
+<button type="button" onclick="addToDisplay('(')">(</button>
+<button type="button" onclick="addToDisplay(')')">)</button>
+<button type="button" onclick="addToDisplay('/')">/</button>
+<button type="button" onclick="addToDisplay('*')">*</button>
 
-<button type="button" onclick="addToDisplay('4')">4</button> <button type="button" onclick="addToDisplay('5')">5</button> <button type="button" onclick="addToDisplay('6')">6</button> <button type="button" onclick="addToDisplay('*')">*</button>
+<button type="button" onclick="addToDisplay('7')">7</button>
+<button type="button" onclick="addToDisplay('8')">8</button>
+<button type="button" onclick="addToDisplay('9')">9</button>
+<button type="button" onclick="addToDisplay('-')">-</button>
 
-<button type="button" onclick="addToDisplay('1')">1</button> <button type="button" onclick="addToDisplay('2')">2</button> <button type="button" onclick="addToDisplay('3')">3</button> <button type="button" onclick="addToDisplay('-')">-</button>
+<button type="button" onclick="addToDisplay('4')">4</button>
+<button type="button" onclick="addToDisplay('5')">5</button>
+<button type="button" onclick="addToDisplay('6')">6</button>
+<button type="button" onclick="addToDisplay('+')">+</button>
 
-<button type="button" onclick="addToDisplay('0')">0</button> <button type="button" onclick="addToDisplay('.')">.</button>
-
+<button type="button" onclick="addToDisplay('1')">1</button>
+<button type="button" onclick="addToDisplay('2')">2</button>
+<button type="button" onclick="addToDisplay('3')">3</button>
 <button class="equals" type="submit">=</button>
 
-<button type="button" onclick="addToDisplay('+')">+</button>
+<button type="button" onclick="addToDisplay('0')">0</button>
+<button type="button" onclick="addToDisplay('.')">.</button>
 
 </div>
 
