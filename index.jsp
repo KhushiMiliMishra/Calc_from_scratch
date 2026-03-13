@@ -79,6 +79,51 @@ button:hover{
     color:red;
 }
 
+.dark body{
+    background:#121212;
+}
+
+.dark .calculator{
+    background:#1e1e1e;
+    color:white;
+}
+
+.dark .display{
+    background:#2c2c2c;
+    color:white;
+}
+
+.dark button{
+    background:#333;
+    color:white;
+}
+
+.dark button:hover{
+    background:#444;
+}
+
+.dark .memory{
+    background:#3a3a5a;
+}
+
+.dark .equals{
+    background:#2e7d32;
+}
+
+.dark .clear{
+    background:#c62828;
+}
+
+#themeButton{
+    position:absolute;
+    top:20px;
+    right:20px;
+    padding:10px 15px;
+    border: 1px solid #1a0e7f;
+    border-radius:5px;
+    cursor:pointer;
+}
+
 </style>
 
 <script>
@@ -91,11 +136,19 @@ function clearDisplay(){
     document.getElementById("expression").value = "";
 }
 
+function toggleTheme(){
+    document.body.classList.toggle("dark");
+}
+
 </script>
 
 </head>
 
 <body>
+
+<button onclick="toggleTheme()" id="themeButton">
+Theme
+</button>
 
 <div class="calculator">
 

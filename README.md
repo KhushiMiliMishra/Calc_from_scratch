@@ -37,6 +37,5 @@ http://localhost:8080/CalculatorApp
 
 ## Future Improvements
 
-- Improved UI
-- Keyboard + button input
+- Dark theme option
 
