@@ -1,8 +1,6 @@
 package com.calculator;
 
 import java.io.IOException;
-import java.util.*;
-
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
@@ -23,28 +21,20 @@ public class CalculatorServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         Double memory = (Double) session.getAttribute("memory");
-        List<String> history = (List<String>) session.getAttribute("history");
 
-        if(memory == null)
+        if (memory == null)
             memory = 0.0;
-
-        if(history == null)
-            history = new ArrayList<>();
 
         double result = 0;
 
         try {
 
-            if(expression != null && !expression.isEmpty())
-            {
+            if (expression != null && !expression.isEmpty()) {
                 result = engine.evaluate(expression);
-                history.add(expression + " = " + result);
             }
 
-            if(action != null)
-            {
-                switch(action)
-                {
+            if (action != null) {
+                switch (action) {
                     case "MC":
                         memory = 0.0;
                         break;
@@ -63,18 +53,18 @@ public class CalculatorServlet extends HttpServlet {
                 }
             }
 
+            // ✅ STORE IN SESSION
             session.setAttribute("memory", memory);
-            session.setAttribute("history", history);
+            session.setAttribute("result", result);
 
-            request.setAttribute("result", result);
-
-        }
-        catch(Exception e)
+        } 
+        catch (Exception e) 
         {
-            request.setAttribute("error", e.getMessage());
+            session.setAttribute("error", e.getMessage());
+            session.setAttribute("expression", expression);
         }
 
-        // THIS IS THE IMPORTANT LINE
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        // ✅ REDIRECT (PRG)
+        response.sendRedirect("index.jsp");
     }
 }

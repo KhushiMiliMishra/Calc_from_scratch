@@ -1,14 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <!DOCTYPE html>
-
 <html>
 
 <head>
 <title>Calculator</title>
 
 <style>
-
 body{
     font-family: Arial;
     background:#f0f0f0;
@@ -22,7 +20,7 @@ body{
     background:white;
     padding:20px;
     border-radius:10px;
-    width: 300px;
+    width:300px;
     box-shadow:0 0 15px rgba(0,0,0,0.2);
 }
 
@@ -70,16 +68,14 @@ button:hover{
     background:#e6e6ff;
 }
 
-.result{
-    margin-top:15px;
-    font-size:16px;
-}
-
 .error{
     color:red;
+    margin-top:10px;
+    text-align:center;
 }
 
-.dark body{
+/* DARK MODE */
+.dark{
     background:#121212;
 }
 
@@ -119,15 +115,13 @@ button:hover{
     top:20px;
     right:20px;
     padding:10px 15px;
-    border: 1px solid #1a0e7f;
+    border:1px solid #1a0e7f;
     border-radius:5px;
     cursor:pointer;
 }
-
 </style>
 
 <script>
-
 function addToDisplay(value){
     document.getElementById("expression").value += value;
 }
@@ -140,15 +134,30 @@ function toggleTheme(){
     document.body.classList.toggle("dark");
 }
 
+function backspace(){
+    let display = document.getElementById("expression");
+    display.value = display.value.slice(0, -1);
+}
+
+document.addEventListener("keydown", function(event){
+    if(event.key === "Enter"){
+        event.preventDefault();
+        document.querySelector("form").submit();
+    }
+});
+
+window.onload = function(){
+    let input = document.getElementById("expression");
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+};
 </script>
 
 </head>
 
 <body>
 
-<button onclick="toggleTheme()" id="themeButton">
-Theme
-</button>
+<button onclick="toggleTheme()" id="themeButton">Theme</button>
 
 <div class="calculator">
 
@@ -160,12 +169,16 @@ name="expression"
 id="expression"
 class="display"
 autocomplete="off"
-value="<%= request.getAttribute("result") != null ? request.getAttribute("result") : request.getParameter("expression") != null ? request.getParameter("expression") : "" %>"
+value="<%= 
+    session.getAttribute("result") != null ? session.getAttribute("result") : 
+    session.getAttribute("expression") != null ? session.getAttribute("expression") : "" 
+%>"
 />
 
 <div class="buttons">
 
 <button type="button" class="clear" onclick="clearDisplay()">C</button>
+<button type="button" onclick="backspace()">⌫</button>
 
 <button class="memory" type="submit" name="action" value="MC">MC</button>
 <button class="memory" type="submit" name="action" value="MR">MR</button>
@@ -199,13 +212,16 @@ value="<%= request.getAttribute("result") != null ? request.getAttribute("result
 
 </form>
 
-<div class="result">
-
 <p class="error">
-<%= request.getAttribute("error") != null ? request.getAttribute("error") : "" %>
+<%= session.getAttribute("error") != null ? session.getAttribute("error") : "" %>
 </p>
 
-</div>
+<%
+/* CLEAR AFTER DISPLAY (IMPORTANT) */
+session.removeAttribute("result");
+session.removeAttribute("error");
+session.removeAttribute("expression");
+%>
 
 </div>
 
