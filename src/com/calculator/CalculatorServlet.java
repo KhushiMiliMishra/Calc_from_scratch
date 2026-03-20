@@ -31,17 +31,26 @@ public class CalculatorServlet extends HttpServlet {
 
             double currentValue = 0;
 
-            try {
-                if (expression != null && !expression.isEmpty()) {
-                    currentValue = engine.evaluate(expression);
+            // If it's a memory operation, be forgiving
+            if (action != null) {
+                try {
+                    if (expression != null && !expression.isEmpty()) {
+                        currentValue = engine.evaluate(expression);
+                    }
+                } 
+                catch (Exception e) {
+                    Object prevResult = session.getAttribute("result");
+                    if (prevResult != null) {
+                        currentValue = Double.parseDouble(prevResult.toString());
+                    } else {
+                        currentValue = 0;
+                    }
                 }
-            } catch (Exception e) {
-                // fallback to last valid result if expression invalid
-                Object prevResult = session.getAttribute("result");
-                if (prevResult != null) {
-                    currentValue = Double.parseDouble(prevResult.toString());
-                } else {
-                    currentValue = 0;
+            } 
+            // If it's normal "=" calculation → show error properly
+            else {
+                if (expression != null && !expression.isEmpty()) {
+                    currentValue = engine.evaluate(expression); // let it throw error
                 }
             }
 
