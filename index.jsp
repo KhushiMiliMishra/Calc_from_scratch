@@ -123,7 +123,14 @@ button:hover{
 
 <script>
 function addToDisplay(value){
-    document.getElementById("expression").value += value;
+    let display = document.getElementById("expression");
+
+    // If current value is 0 or 0.0, replace instead of append
+    if(display.value === "0" || display.value === "0.0"){
+        display.value = value;
+    } else {
+        display.value += value;
+    }
 }
 
 function clearDisplay(){
@@ -132,6 +139,12 @@ function clearDisplay(){
 
 function toggleTheme(){
     document.body.classList.toggle("dark");
+
+    if(document.body.classList.contains("dark")){
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
 }
 
 function backspace(){
@@ -147,6 +160,13 @@ document.addEventListener("keydown", function(event){
 });
 
 window.onload = function(){
+
+    // Restore theme
+    const savedTheme = localStorage.getItem("theme");
+    if(savedTheme === "dark"){
+        document.body.classList.add("dark");
+    }
+
     let input = document.getElementById("expression");
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);
@@ -187,14 +207,15 @@ value="<%=
 
 <button type="button" onclick="addToDisplay('(')">(</button>
 <button type="button" onclick="addToDisplay(')')">)</button>
+<button type="button" onclick="addToDisplay('%')">%</button>
 <button type="button" onclick="addToDisplay('/')">/</button>
-<button type="button" onclick="addToDisplay('*')">*</button>
 
+<button type="button" onclick="addToDisplay('*')">*</button>
 <button type="button" onclick="addToDisplay('7')">7</button>
 <button type="button" onclick="addToDisplay('8')">8</button>
 <button type="button" onclick="addToDisplay('9')">9</button>
-<button type="button" onclick="addToDisplay('-')">-</button>
 
+<button type="button" onclick="addToDisplay('-')">-</button>
 <button type="button" onclick="addToDisplay('4')">4</button>
 <button type="button" onclick="addToDisplay('5')">5</button>
 <button type="button" onclick="addToDisplay('6')">6</button>

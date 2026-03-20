@@ -33,6 +33,9 @@ public class CalculatorEngine {
                 }
                 return a / b;
             case '%':
+                if(b == 0) {
+                    throw new ArithmeticException("Modulo by zero");
+                }
                 return a % b;
             default:
                 throw new IllegalArgumentException("Invalid operator: " + operator);
@@ -96,14 +99,28 @@ public class CalculatorEngine {
 
             else if(ch=='(')
             {
+                // Handle implicit multiplication like 2(3)
+                if(!lastWasOperator)
+                {
+                    operators.push('*'); // IMPORTANT: do not evaluate here
+                }
+
                 operators.push(ch);
                 lastWasOperator = true; // Set to true since we are now processing an operator
             }
 
             else if(ch == ')')
             {
+                if(lastWasOperator)
+                {
+                    throw new IllegalArgumentException("Empty parentheses or invalid expression");
+                }
+
                 while(!operators.isEmpty() && operators.peek() != '(')
                 {
+                    if(numbers.size() < 2)
+                        throw new IllegalArgumentException("Invalid expression");
+
                     double b = numbers.pop();
                     double a = numbers.pop();
                     char op = operators.pop();
@@ -117,6 +134,13 @@ public class CalculatorEngine {
 
                 operators.pop(); // remove '('
                 lastWasOperator = false;
+
+                // Handle implicit multiplication like (2)(3)
+                if(i + 1 < expression.length() && expression.charAt(i + 1) == '(')
+                {
+                    operators.push('*');
+                    lastWasOperator = true;
+                }
             }
 
             else if(ch=='+' || ch=='-' || ch=='*' || ch=='/' || ch=='%') //if it is an operator
@@ -124,12 +148,27 @@ public class CalculatorEngine {
                 //Handle unary plus
                 if(ch == '+' && lastWasOperator)
                 {
-                    continue;
+                    throw new IllegalArgumentException("Invalid operator sequence");
                 }
 
                 //Handle unary minus for negative numbers
                 if(ch=='-' && lastWasOperator)
                 {
+                    // Case 1: -(...) → treat as -1 * (...)
+                    if(i + 1 < expression.length() && expression.charAt(i+1) == '(')
+                    {
+                        numbers.push(-1.0);
+                        operators.push('*');
+                        continue;
+                    }
+
+                    // Case 2: normal negative number
+                    if(i + 1 >= expression.length() || 
+                       (!Character.isDigit(expression.charAt(i+1)) && expression.charAt(i+1) != '.'))
+                    {
+                        throw new IllegalArgumentException("Invalid negative number format");
+                    }
+
                     StringBuilder num =new StringBuilder();
                     num.append('-');
                     i++;
@@ -149,14 +188,12 @@ public class CalculatorEngine {
                         i++;
                     }
                     i--; // Move back one character for the extra increment
-                    if(num.toString().equals("-"))
-                    {
-                        throw new IllegalArgumentException("Invalid negative number format");
-                    }
+
                     numbers.push(Double.parseDouble(num.toString()));
                     lastWasOperator = false; // Set to false since we are now processing a number
                     continue; // Skip the rest of the loop to avoid treating this as a binary operator
                 }
+
                 //Handle invalid operator sequences like "++" or "--"
                 if(lastWasOperator) 
                 {
@@ -165,6 +202,9 @@ public class CalculatorEngine {
 
                 while(!operators.isEmpty() && precedence(operators.peek()) >= precedence(ch)) 
                 {
+                    if(numbers.size() < 2)
+                        throw new IllegalArgumentException("Invalid expression");
+
                     double b = numbers.pop();
                     double a = numbers.pop();
                     char op = operators.pop();
@@ -187,12 +227,14 @@ public class CalculatorEngine {
             throw new IllegalArgumentException("Expression cannot end with operator");
         }
         
-
         // Apply remaining operators
         while(!operators.isEmpty()) 
         {
             if(operators.peek() == '(')
                 throw new IllegalArgumentException("Mismatched parentheses");
+
+            if(numbers.size() < 2)
+                throw new IllegalArgumentException("Invalid expression");
 
             double b = numbers.pop();
             double a = numbers.pop();
@@ -200,15 +242,19 @@ public class CalculatorEngine {
             numbers.push(applyOperator(a, b, op)); 
         }
 
-        return numbers.pop(); // The final result 
-    }
-    public static void main(String[] args) {
-        CalculatorEngine engine = new CalculatorEngine();
-        try {
-            System.out.println(engine.evaluate("3. + ,5 * 2")); 
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+        if(numbers.size() != 1)
+        {
+            throw new IllegalArgumentException("Invalid expression");
         }
+
+        double finalResult = numbers.pop();
+
+        // Normalize -0.0 to 0.0
+        if(finalResult == 0.0)
+        {
+            finalResult = 0.0;
+        }
+
+        return finalResult; // The final result 
     }
 }
-

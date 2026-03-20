@@ -29,9 +29,23 @@ public class CalculatorServlet extends HttpServlet {
 
         try {
 
-            if (expression != null && !expression.isEmpty()) {
-                result = engine.evaluate(expression);
+            double currentValue = 0;
+
+            try {
+                if (expression != null && !expression.isEmpty()) {
+                    currentValue = engine.evaluate(expression);
+                }
+            } catch (Exception e) {
+                // fallback to last valid result if expression invalid
+                Object prevResult = session.getAttribute("result");
+                if (prevResult != null) {
+                    currentValue = Double.parseDouble(prevResult.toString());
+                } else {
+                    currentValue = 0;
+                }
             }
+
+            result = currentValue;
 
             if (action != null) {
                 switch (action) {
@@ -40,11 +54,11 @@ public class CalculatorServlet extends HttpServlet {
                         break;
 
                     case "M+":
-                        memory += result;
+                        memory += currentValue;
                         break;
 
                     case "M-":
-                        memory -= result;
+                        memory -= currentValue;
                         break;
 
                     case "MR":
@@ -53,7 +67,12 @@ public class CalculatorServlet extends HttpServlet {
                 }
             }
 
-            // ✅ STORE IN SESSION
+            // Normalize -0.0 → 0.0
+            if(result == 0.0) {
+                result = 0.0;
+            }
+
+            // STORE IN SESSION
             session.setAttribute("memory", memory);
             session.setAttribute("result", result);
 
@@ -64,7 +83,7 @@ public class CalculatorServlet extends HttpServlet {
             session.setAttribute("expression", expression);
         }
 
-        // ✅ REDIRECT (PRG)
+        // REDIRECT (PRG)
         response.sendRedirect("index.jsp");
     }
 }
